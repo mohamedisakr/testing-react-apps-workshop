@@ -1,9 +1,13 @@
 // simple test with ReactDOM
 // http://localhost:3000/counter
 
-import * as React from 'react'
-import ReactDOM, {render} from 'react-dom'
+// import * as React from 'react'
+import {render} from 'react-dom'
 import Counter from '../../components/counter'
+
+beforeEach(() => {
+  document.body.innerHTML = ''
+})
 
 test('counter increments and decrements when the buttons are clicked', () => {
   // 🐨 create a div to render your component to (💰 document.createElement)
@@ -17,7 +21,7 @@ test('counter increments and decrements when the buttons are clicked', () => {
 
   // 🐨 get a reference to the increment and decrement buttons:
   //   💰 div.querySelectorAll('button')
-  const buttons = [...div.querySelectorAll('button')]
+  const [decrement, increment] = div.querySelectorAll('button')
 
   // 🐨 get a reference to the message div:
   //   💰 div.firstChild.querySelector('div')
@@ -26,19 +30,22 @@ test('counter increments and decrements when the buttons are clicked', () => {
   // 🐨 expect the message.textContent toBe 'Current count: 0'
   expect(message.textContent).toBe('Current count: 0')
 
+  const mouseEvent = new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    button: 0,
+  })
   // 🐨 click the increment button (💰 increment.click())
-  buttons[1].click()
+  increment.dispatchEvent(mouseEvent)
+
   // 🐨 assert the message.textContent
   expect(message.textContent).toBe('Current count: 1')
 
   // 🐨 click the decrement button (💰 decrement.click())
-  buttons[0].click()
+  decrement.dispatchEvent(mouseEvent)
+
   // 🐨 assert the message.textContent
   expect(message.textContent).toBe('Current count: 0')
-  //
-  // 🐨 cleanup by removing the div from the page (💰 div.remove())
-  div.remove()
-  // 🦉 If you don't cleanup, then it could impact other tests and/or cause a memory leak
 })
 
 /* eslint no-unused-vars:0 */
