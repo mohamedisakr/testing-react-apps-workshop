@@ -11,6 +11,7 @@ import {build, fake} from '@jackfranklin/test-data-bot'
 import {rest} from 'msw'
 import {setupServer} from 'msw/node'
 import Login from '../../components/login-submission'
+import {handlers} from '../../test/server-handlers'
 
 const buildLoginForm = build({
   fields: {
@@ -22,12 +23,14 @@ const buildLoginForm = build({
 // 🐨 get the server setup with an async function to handle the login POST request:
 const apiEndpoint = 'https://auth-provider.example.com/api/login'
 
-const server = setupServer(
-  rest.post(apiEndpoint, async (req, res, ctx) => {
-    const {username} = req.body
-    return res(ctx.json({username}))
-  }),
-)
+// const server = setupServer(
+//   rest.post(apiEndpoint, async (req, res, ctx) => {
+//     const {username} = req.body
+//     return res(ctx.json({username}))
+//   }),
+// )
+
+const server = setupServer(handlers[0])
 
 // you'll want to respond with an JSON object that has the username.
 // 📜 https://mswjs.io/
