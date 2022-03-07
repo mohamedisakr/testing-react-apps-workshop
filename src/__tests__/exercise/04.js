@@ -6,9 +6,10 @@ import userEvent from '@testing-library/user-event'
 import {faker} from '@faker-js/faker'
 import Login from '../../components/login'
 
-const buildLoginForm = () => ({
+const buildLoginForm = defaults => ({
   username: faker.internet.userName(),
   password: faker.internet.password(),
+  ...defaults,
 })
 
 test('submitting the form calls onSubmit with username and password', () => {
@@ -74,8 +75,8 @@ test('use a jest mock function', () => {
   expect(handleSubmitMock).toHaveBeenCalledTimes(1)
 })
 
-test.only('generate test data', () => {
-// that accepts the data and assigns submittedData to the data that was
+test('generate test data', () => {
+  // that accepts the data and assigns submittedData to the data that was
   // submitted
   const handleSubmitMock = jest.fn()
 
@@ -99,6 +100,36 @@ test.only('generate test data', () => {
   // Jest has built-in "mock" function APIs. Rather than creating the
   // submittedData variable, try to use a mock function and assert it
   // was called correctly
+  expect(handleSubmitMock).toHaveBeenCalledWith({username, password})
+  expect(handleSubmitMock).toHaveBeenCalledTimes(1)
+})
+
+test.only('allow for overrides', () => {
+  // that accepts the data and assigns submittedData to the data that was
+  // submitted
+  const handleSubmitMock = jest.fn()
+
+  // 🐨 render the login with your handleSubmit function as the onSubmit prop
+  render(<Login onSubmit={handleSubmitMock} />)
+
+  // 🐨 get the username and password fields via `getByLabelText`
+  const usernameField = screen.getByLabelText(/username/i)
+  const passwordField = screen.getByLabelText(/password/i)
+
+  // 🐨 use userEvent.type to change the username and password fields to
+  //    whatever you want
+  const {username, password} = buildLoginForm({password: 'fjKbKpzNUtHE55WU'})
+  userEvent.type(usernameField, username)
+  userEvent.type(passwordField, password)
+
+  // 🐨 click on the button with the text "Submit"
+  const submit = screen.getByRole('button', {name: /submit/i})
+  userEvent.click(submit)
+
+  // Jest has built-in "mock" function APIs. Rather than creating the
+  // submittedData variable, try to use a mock function and assert it
+  // was called correctly
+
   expect(handleSubmitMock).toHaveBeenCalledWith({username, password})
   expect(handleSubmitMock).toHaveBeenCalledTimes(1)
 })
