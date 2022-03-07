@@ -70,7 +70,7 @@ test(`logging in displays the user's username`, async () => {
   expect(screen.getByText(username)).toBeInTheDocument()
 })
 
-test.only(`test the unhappy path`, async () => {
+test(`test the unhappy path`, async () => {
   render(<Login />)
   // const {username, password} = buildLoginForm()
 
@@ -88,4 +88,45 @@ test.only(`test the unhappy path`, async () => {
 
   // 🐨 assert that the alert is on the screen
   expect(screen.getByRole('alert')).toBeInTheDocument()
+})
+
+test(`omitting password will display alert message`, async () => {
+  render(<Login />)
+  const {username} = buildLoginForm()
+  userEvent.type(screen.getByLabelText(/username/i), username)
+
+  // 🐨 uncomment this and you'll start making the request!
+  userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  // as soon as the user hits submit, we render a spinner to the screen. That
+  // spinner has an aria-label of "loading" for accessibility purposes, so
+  // 🐨 wait for the loading spinner to be removed using waitForElementToBeRemoved
+  // 📜 https://testing-library.com/docs/dom-testing-library/api-async#waitforelementtoberemoved
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+
+  // 🐨 assert that the alert is on the screen
+  expect(screen.getByRole('alert')).toBeInTheDocument()
+  expect(screen.getByRole('alert')).toHaveTextContent(/password/i)
+})
+
+test.only(`use inline snapshots for error messages`, async () => {
+  render(<Login />)
+  const {username} = buildLoginForm()
+  userEvent.type(screen.getByLabelText(/username/i), username)
+
+  // 🐨 uncomment this and you'll start making the request!
+  userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  // as soon as the user hits submit, we render a spinner to the screen. That
+  // spinner has an aria-label of "loading" for accessibility purposes, so
+  // 🐨 wait for the loading spinner to be removed using waitForElementToBeRemoved
+  // 📜 https://testing-library.com/docs/dom-testing-library/api-async#waitforelementtoberemoved
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+
+  // 🐨 assert that the alert is on the screen
+  // expect(screen.getByRole('alert')).toBeInTheDocument()
+  // expect(screen.getByRole('alert')).toHaveTextContent(/password/i)
+  expect(screen.getByRole('alert').textContent).toMatchInlineSnapshot(
+    `"password required"`,
+  )
 })
