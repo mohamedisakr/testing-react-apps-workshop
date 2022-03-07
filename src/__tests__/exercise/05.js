@@ -30,7 +30,7 @@ const apiEndpoint = 'https://auth-provider.example.com/api/login'
 //   }),
 // )
 
-const server = setupServer(handlers[0])
+const server = setupServer(...handlers)
 
 // you'll want to respond with an JSON object that has the username.
 // 📜 https://mswjs.io/
@@ -68,4 +68,24 @@ test(`logging in displays the user's username`, async () => {
   // we render the username.
   // 🐨 assert that the username is on the screen
   expect(screen.getByText(username)).toBeInTheDocument()
+})
+
+test.only(`test the unhappy path`, async () => {
+  render(<Login />)
+  // const {username, password} = buildLoginForm()
+
+  // userEvent.type(screen.getByLabelText(/username/i), username)
+  // userEvent.type(screen.getByLabelText(/password/i), password)
+
+  // 🐨 uncomment this and you'll start making the request!
+  userEvent.click(screen.getByRole('button', {name: /submit/i}))
+
+  // as soon as the user hits submit, we render a spinner to the screen. That
+  // spinner has an aria-label of "loading" for accessibility purposes, so
+  // 🐨 wait for the loading spinner to be removed using waitForElementToBeRemoved
+  // 📜 https://testing-library.com/docs/dom-testing-library/api-async#waitforelementtoberemoved
+  await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i))
+
+  // 🐨 assert that the alert is on the screen
+  expect(screen.getByRole('alert')).toBeInTheDocument()
 })
